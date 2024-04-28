@@ -58,8 +58,6 @@ export const Carousel = () => {
       <div className="d-lg-none mt-3">
         <div className="row d-flex justify-content-center align-items-center">
           <ReturnBook />
-          <ReturnBook />
-          <ReturnBook />
         </div>
       </div>
       <div className="homepage-carousel-title mt-3">
