@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import BookModel from "../../../models/BookModel";
 import { ReturnBook } from "./ReturnBook";
+import { SpinnerLoading } from "../../Utils/SpinnerLoading";
 
 /* eslint-disable jsx-a11y/anchor-is-valid */
 export const Carousel = () => {
@@ -49,11 +50,7 @@ export const Carousel = () => {
   }, []);
 
   if (isLoading) {
-    return (
-      <div className="container m-5">
-        <p>Yükleniyor..</p>
-      </div>
-    );
+    return <SpinnerLoading />;
   }
 
   if (httpError) {
