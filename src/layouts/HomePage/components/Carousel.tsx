@@ -13,7 +13,7 @@ export const Carousel = () => {
     const fetchBooks = async () => {
       const baseUrl = "http://localhost:8080/api/books";
 
-      const url = `${baseUrl}?page=0size9`;
+      const url = `${baseUrl}?page=0&size=9`;
 
       const response = await fetch(url);
 
