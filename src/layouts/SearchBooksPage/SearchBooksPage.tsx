@@ -13,11 +13,19 @@ export const SearchBooksPage = () => {
   const [booksPerPage] = useState(5);
   const [totalAmountOfBooks, setTotalAmountOfBooks] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [search, setSearch] = useState("");
+  const [searchUrl, setSearchUrl] = useState("");
   useEffect(() => {
     const fetchBooks = async () => {
       const baseUrl = "http://localhost:8080/api/books";
 
-      const url = `${baseUrl}?page=${currentPage - 1}&size=${booksPerPage}`;
+      let url = "";
+
+      if (searchUrl === "") {
+        url = `${baseUrl}?page=${currentPage - 1}&size=${booksPerPage}`;
+      } else {
+        url = baseUrl + searchUrl;
+      }
 
       const response = await fetch(url);
 
@@ -55,7 +63,7 @@ export const SearchBooksPage = () => {
       setHttpError(error.message);
     });
     window.scrollTo(0, 0);
-  }, [currentPage]);
+  }, [currentPage, searchUrl]);
 
   if (isLoading) {
     return <SpinnerLoading />;
@@ -68,6 +76,16 @@ export const SearchBooksPage = () => {
       </div>
     );
   }
+
+  const searchHandleChange = () => {
+    if (search === "") {
+      setSearchUrl("");
+    } else {
+      setSearchUrl(
+        `/search/findByTitleContaining?title=${search}&page=0&size=${booksPerPage}`
+      );
+    }
+  };
   const indexOfLastBook: number = currentPage * booksPerPage;
   const indexOfFirstBook: number = indexOfLastBook - booksPerPage;
 
@@ -89,8 +107,9 @@ export const SearchBooksPage = () => {
                   className="form-control me-2"
                   placeholder="Search"
                   aria-labelledby="Search"
+                  onChange={e =>setSearch(e.target.value)}
                 />
-                <button className="btn btn-outline-success">Search</button>
+                <button className="btn btn-outline-success" onClick={() => searchHandleChange()}>Search</button>
               </div>
             </div>
             <div className="col-4">
