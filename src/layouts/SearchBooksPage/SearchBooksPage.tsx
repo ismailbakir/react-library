@@ -15,6 +15,7 @@ export const SearchBooksPage = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [search, setSearch] = useState("");
   const [searchUrl, setSearchUrl] = useState("");
+  const [categorySelection, setCategorySelection] = useState("Book Category");
   useEffect(() => {
     const fetchBooks = async () => {
       const baseUrl = "http://localhost:8080/api/books";
@@ -24,7 +25,8 @@ export const SearchBooksPage = () => {
       if (searchUrl === "") {
         url = `${baseUrl}?page=${currentPage - 1}&size=${booksPerPage}`;
       } else {
-        url = baseUrl + searchUrl;
+        let searchWithPage = searchUrl.replace('<pageNumber>',`${currentPage - 1}`);
+        url = baseUrl + searchWithPage;
       }
 
       const response = await fetch(url);
@@ -78,12 +80,32 @@ export const SearchBooksPage = () => {
   }
 
   const searchHandleChange = () => {
+    setCurrentPage(1);
     if (search === "") {
       setSearchUrl("");
     } else {
       setSearchUrl(
-        `/search/findByTitleContaining?title=${search}&page=0&size=${booksPerPage}`
+        `/search/findByTitleContaining?title=${search}&page=<pageNumber>&size=${booksPerPage}`
       );
+    }
+    setCategorySelection('Book Category');
+  };
+
+  const categoryField = (value: string) => {
+    setCurrentPage(1);
+    if (
+      value.toLowerCase() === "fe" ||
+      value.toLowerCase() === "be" ||
+      value.toLowerCase() === "devops" ||
+      value.toLowerCase() === "data"
+    ) {
+      setCategorySelection(value);
+      setSearchUrl(
+        `/search/findByCategory?category=${value}&page=<pageNumber>&size=${booksPerPage}`
+      );
+    } else {
+      setCategorySelection("All");
+      setSearchUrl(`?page=<pageNumber>&size=${booksPerPage}`);
     }
   };
   const indexOfLastBook: number = currentPage * booksPerPage;
@@ -126,33 +148,33 @@ export const SearchBooksPage = () => {
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
-                  Kategori
+                  {categorySelection}
                 </button>
                 <ul
                   className="dropdown-menu"
                   aria-labelledby="dropdownMenuButton1"
                 >
-                  <li>
+                  <li onClick={() => categoryField('All')}>
                     <a className="dropdown-item" href="#">
                       Hepsi
                     </a>
                   </li>
-                  <li>
+                  <li onClick={() => categoryField('FE')}>
                     <a className="dropdown-item" href="#">
                       Frontend
                     </a>
                   </li>
-                  <li>
+                  <li onClick={() => categoryField('BE')}>
                     <a className="dropdown-item" href="#">
                       Backend
                     </a>
                   </li>
-                  <li>
+                  <li onClick={() => categoryField('Data')}>
                     <a className="dropdown-item" href="#">
                       Data
                     </a>
                   </li>
-                  <li>
+                  <li onClick={() => categoryField('Devops')}>
                     <a className="dropdown-item" href="#">
                       Devops
                     </a>
@@ -178,8 +200,8 @@ export const SearchBooksPage = () => {
             <div className="m-5">
               <h3> Aradığını bulamıyor musun?</h3>
               <a
-                type='button'
-                className='btn main-color btn-md px-4 me-md-2 fw-bold text-white'
+                type="button"
+                className="btn main-color btn-md px-4 me-md-2 fw-bold text-white"
                 href="#"
               >
                 Kütüphane Servisi
